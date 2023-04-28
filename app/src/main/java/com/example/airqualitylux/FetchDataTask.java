@@ -1,7 +1,11 @@
 package com.example.airqualitylux;
 
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+
+import androidx.core.content.ContextCompat;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -77,12 +81,21 @@ public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
                 double latitude = uniqueLocation.getDouble("latitude");
                 double longitude = uniqueLocation.getDouble("longitude");
 
+
+
                 GeoPoint point = new GeoPoint(latitude, longitude);
                 Marker marker = new Marker(mapView);
                 marker.setPosition(point);
+                marker.setAnchor(0.2f, 0.2f);
+
+                Drawable markerDrawable = ContextCompat.getDrawable(mContext, R.drawable.marker);
+                BitmapDrawable bitmapDrawable = (BitmapDrawable) markerDrawable;
+                marker.setIcon(bitmapDrawable);
 
                 pollutionOverlay.add(marker);
             }
+
+
             // Add the pollutionOverlay to the mapView and refresh the map
             mapView.getOverlays().add(pollutionOverlay);
             mapView.invalidate();
