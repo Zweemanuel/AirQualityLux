@@ -6,12 +6,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import org.osmdroid.config.Configuration;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.FolderOverlay;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        FolderOverlay markersOverlay = new FolderOverlay();
 
         //Initialize mapView
         MapView mapView = findViewById(R.id.mapView);
@@ -58,5 +59,7 @@ public class MainActivity extends AppCompatActivity {
         // Set initial view and zoom level
         mapView.getController().setZoom(10.5);
         mapView.getController().setCenter(new GeoPoint(49.8153, 6.1296)); // Set a default center point
+
+        new FetchDataTask(mapView, MainActivity.this, markersOverlay).execute("https://data.sensor.community/airrohr/v1/filter/country=LU");
     }
 }
