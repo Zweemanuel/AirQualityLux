@@ -72,15 +72,61 @@ public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
 
                 String locationKey = String.format("%f_%f", latitude, longitude);
 
-                if (!uniqueLocations.containsKey(locationKey)) {
-                    uniqueLocations.put(locationKey, location);
+                if (uniqueLocations.containsKey(locationKey)) {
+                    JSONObject existingData = uniqueLocations.get(locationKey);
+
+                    JSONArray newSensorDataValues = sensorData.getJSONArray("sensordatavalues");
+                    JSONArray existingSensorDataValues = existingData.getJSONArray("sensordatavalues");
+
+                    for (int j = 0; j < newSensorDataValues.length(); j++) {
+                        JSONObject newSensorDataValue = newSensorDataValues.getJSONObject(j);
+                        String newValueType = newSensorDataValue.getString("value_type");
+                        boolean updated = false;
+
+                        for (int k = 0; k < existingSensorDataValues.length(); k++) {
+                            JSONObject existingSensorDataValue = existingSensorDataValues.getJSONObject(k);
+                            String existingValueType = existingSensorDataValue.getString("value_type");
+
+                            if (newValueType.equals(existingValueType)) {
+                                String newTimestamp = sensorData.getString("timestamp");
+                                String existingTimestamp = existingData.getString("timestamp");
+
+                                if (newTimestamp.compareTo(existingTimestamp) > 0) {
+                                    existingSensorDataValue.put("value", newSensorDataValue.getString("value"));
+                                    existingData.put("timestamp", newTimestamp);
+                                }
+                                updated = true;
+                                break;
+                            }
+                        }
+
+                        if (!updated) {
+                            existingSensorDataValues.put(newSensorDataValue);
+                        }
+                    }
+                } else {
+                    uniqueLocations.put(locationKey, sensorData);
                 }
             }
 
-            for (JSONObject uniqueLocation : uniqueLocations.values()) {
-                double latitude = uniqueLocation.getDouble("latitude");
-                double longitude = uniqueLocation.getDouble("longitude");
+            for (JSONObject uniqueSensorData : uniqueLocations.values()) {
+                JSONObject location = uniqueSensorData.getJSONObject("location");
+                JSONObject sensor = uniqueSensorData.getJSONObject("sensor");
+                double latitude = location.getDouble("latitude");
+                double longitude = location.getDouble("longitude");
 
+                JSONArray sensorDataValues = uniqueSensorData.getJSONArray("sensordatavalues");
+                StringBuilder descriptionBuilder = new StringBuilder();
+
+                for (int j = 0; j < sensorDataValues.length(); j++) {
+                    JSONObject sensorDataValue = sensorDataValues.getJSONObject(j);
+                    descriptionBuilder.append(sensorDataValue.getString("value_type"))
+                            .append(": ")
+                            .append(sensorDataValue.getString("value"))
+                            .append("\n");
+                }
+
+                descriptionBuilder.append("Timestamp: ").append(uniqueSensorData.getString("timestamp"));
 
 
                 GeoPoint point = new GeoPoint(latitude, longitude);
