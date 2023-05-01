@@ -4,6 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageButton;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.card.MaterialCardView;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
@@ -15,6 +22,8 @@ import org.osmdroid.views.overlay.FolderOverlay;
 
 public class MainActivity extends AppCompatActivity {
 
+    private ImageButton centerButton;
+    private CheckBox centerButtonCheck;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,5 +70,31 @@ public class MainActivity extends AppCompatActivity {
         mapView.getController().setCenter(new GeoPoint(49.8153, 6.1296)); // Set a default center point
 
         new FetchDataTask(mapView, MainActivity.this, markersOverlay).execute("https://data.sensor.community/airrohr/v1/filter/country=LU");
+
+        // User Interface
+
+        // Bottom card
+        MaterialCardView cardView = findViewById(R.id.cardView);
+        BottomSheetBehavior<MaterialCardView> bottomSheetBehavior = BottomSheetBehavior.from(cardView);
+        bottomSheetBehavior.setPeekHeight(180); // Set the peek height in pixels
+        bottomSheetBehavior.setHideable(false); // Disallow hiding the bottom sheet
+        bottomSheetBehavior.setHalfExpandedRatio(0.5f);
+        // Center Button
+        centerButton = findViewById(R.id.centerButton);
+        centerButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mapView.getController().setZoom(10.5);
+                mapView.getController().animateTo(new GeoPoint(49.8153, 6.1296));
+            }
+        });
+        // Center Check Button
+        centerButtonCheck = findViewById(R.id.centerButtonCheck);
+        centerButtonCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                centerButton.setVisibility(View.VISIBLE);
+            } else {
+                centerButton.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 }
