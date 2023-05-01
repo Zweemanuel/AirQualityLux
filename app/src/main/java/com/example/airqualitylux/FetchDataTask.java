@@ -137,11 +137,11 @@ public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
                 GeoPoint point = new GeoPoint(latitude, longitude);
                 Marker marker = new Marker(mapView);
                 marker.setPosition(point);
-                marker.setAnchor(0.2f, 0.2f);
 
-                Drawable markerDrawable = ContextCompat.getDrawable(mContext, R.drawable.marker);
-                BitmapDrawable bitmapDrawable = (BitmapDrawable) markerDrawable;
-                marker.setIcon(bitmapDrawable);
+                //marker.setAnchor(0.2f, 0.2f);
+                //Drawable markerDrawable = ContextCompat.getDrawable(mContext, R.drawable.marker);
+                //BitmapDrawable bitmapDrawable = (BitmapDrawable) markerDrawable;
+                //marker.setIcon(bitmapDrawable);
 
                 marker.setTitle("Sensor ID: " + sensor.getString("id"));
                 marker.setSnippet(descriptionBuilder.toString());
@@ -155,6 +155,7 @@ public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
                         marker1.closeInfoWindow();
                     } else {
                         marker1.showInfoWindow();
+                        mapView1.getController().animateTo(marker1.getPosition());
                     }
                     return true;
                 });
