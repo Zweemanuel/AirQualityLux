@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
@@ -19,6 +20,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Random;
 
 public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
 
@@ -26,10 +28,12 @@ public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
     private Context mContext;
     FolderOverlay pollutionOverlay;
 
-    public FetchDataTask(MapView mapView, Context context, FolderOverlay markersOverlay) {
+
+    public FetchDataTask(MapView mapView, Context context,FolderOverlay markersOverlay ) {
         this.mapView = mapView;
         this.mContext = context;
-        this.pollutionOverlay = markersOverlay;
+        this.pollutionOverlay =markersOverlay;
+
     }
 
     @Override
@@ -129,6 +133,7 @@ public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
                 descriptionBuilder.append("Timestamp: ").append(uniqueSensorData.getString("timestamp"));
 
 
+
                 GeoPoint point = new GeoPoint(latitude, longitude);
                 Marker marker = new Marker(mapView);
                 marker.setPosition(point);
@@ -138,15 +143,29 @@ public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
                 BitmapDrawable bitmapDrawable = (BitmapDrawable) markerDrawable;
                 marker.setIcon(bitmapDrawable);
 
+                marker.setTitle("Sensor ID: " + sensor.getString("id"));
+                marker.setSnippet(descriptionBuilder.toString());
+
+                marker.setInfoWindow(new CustomInfoWindowAdapter(R.layout.custom_marker_info_window, mapView));
+
                 pollutionOverlay.add(marker);
+
+                marker.setOnMarkerClickListener((marker1, mapView1) -> {
+                    if (marker1.isInfoWindowShown()) {
+                        marker1.closeInfoWindow();
+                    } else {
+                        marker1.showInfoWindow();
+                    }
+                    return true;
+                });
             }
-
-
-            // Add the pollutionOverlay to the mapView and refresh the map
+            //Add the pollutionOverlay to the mapView
             mapView.getOverlays().add(pollutionOverlay);
-            mapView.invalidate();
+            mapView.invalidate(); // Refresh the map
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
 }
