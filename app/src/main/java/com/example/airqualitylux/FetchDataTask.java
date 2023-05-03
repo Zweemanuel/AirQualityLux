@@ -32,7 +32,7 @@ public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
     public FetchDataTask(MapView mapView, Context context,FolderOverlay markersOverlay ) {
         this.mapView = mapView;
         this.mContext = context;
-        this.pollutionOverlay =markersOverlay;
+        this.pollutionOverlay = markersOverlay;
 
     }
 
@@ -163,6 +163,8 @@ public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
             //Add the pollutionOverlay to the mapView
             mapView.getOverlays().add(pollutionOverlay);
             mapView.invalidate(); // Refresh the map
+            // Update the number of pollution markers
+            ((MainActivity) mContext).updateMarkerNumberText(pollutionOverlay.getItems().size());
         } catch (Exception e) {
             e.printStackTrace();
         }

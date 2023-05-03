@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.Switch;
+import android.widget.TextView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.card.MaterialCardView;
@@ -23,6 +25,8 @@ import org.osmdroid.views.overlay.FolderOverlay;
 public class MainActivity extends AppCompatActivity {
 
     private ImageButton centerButton;
+    private TextView markerNumberText;
+    private Switch pollutionSwitch;
     private CheckBox centerButtonCheck;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,9 +74,15 @@ public class MainActivity extends AppCompatActivity {
         mapView.getController().setCenter(new GeoPoint(49.8153, 6.1296)); // Set a default center point
 
         new FetchDataTask(mapView, MainActivity.this, markersOverlay).execute("https://data.sensor.community/airrohr/v1/filter/country=LU");
-
         // User Interface
-
+        // Pollution switch
+        pollutionSwitch = findViewById(R.id.switch1);
+        pollutionSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            markersOverlay.setEnabled(isChecked);
+            mapView.invalidate();
+        });
+        // Number of markers
+        markerNumberText = findViewById(R.id.markerNumberText);
         // Bottom card
         MaterialCardView cardView = findViewById(R.id.cardView);
         BottomSheetBehavior<MaterialCardView> bottomSheetBehavior = BottomSheetBehavior.from(cardView);
@@ -96,5 +106,9 @@ public class MainActivity extends AppCompatActivity {
                 centerButton.setVisibility(View.INVISIBLE);
             }
         });
+    }
+
+    public void updateMarkerNumberText(int n) {
+        markerNumberText.setText("Markers: " + n);
     }
 }
