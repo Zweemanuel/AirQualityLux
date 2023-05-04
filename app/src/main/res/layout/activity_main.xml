@@ -28,6 +28,23 @@
         android:src="@drawable/osm_ic_center_map"
         tools:text="center" />
 
+    <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
+        android:layout_width="30dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center|end"
+        android:layout_marginTop="90dp"
+        android:layout_marginRight="15dp"
+        android:rotation="180">
+
+        <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
+            android:id="@+id/seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:max="150"
+            android:min="100"/>
+
+    </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
@@ -85,7 +102,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="centerButtonCheck"
+                    android:text="Center Button"
+                    android:textColor="@color/black" />
+                <CheckBox
+                    android:id="@+id/seekBarCheck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Zoom Bar"
                     android:textColor="@color/black" />
 
             </LinearLayout>

@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -27,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton centerButton;
     private TextView markerNumberText;
     private Switch pollutionSwitch;
-    private CheckBox centerButtonCheck;
+    private SeekBar seekBar;
+    private CheckBox centerButtonCheck,seekBarCheck;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         centerButton = findViewById(R.id.centerButton);
         centerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mapView.getController().setZoom(10.5);
+                mapView.getController().zoomTo(10.5);
                 mapView.getController().animateTo(new GeoPoint(49.8153, 6.1296));
             }
         });
@@ -104,6 +106,33 @@ public class MainActivity extends AppCompatActivity {
                 centerButton.setVisibility(View.VISIBLE);
             } else {
                 centerButton.setVisibility(View.INVISIBLE);
+            }
+        });
+        // Vertical Seekbar Zoom
+        seekBar = findViewById(R.id.seek_bar);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mapView.getController().setZoom(seekBar.getProgress() / 10f);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        // Seekbar check
+        seekBarCheck = findViewById(R.id.seekBarCheck);
+        seekBarCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                seekBar.setVisibility(View.VISIBLE);
+            } else {
+                seekBar.setVisibility(View.INVISIBLE);
             }
         });
     }
