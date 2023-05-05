@@ -1,12 +1,7 @@
 package com.example.airqualitylux;
 
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.util.Log;
-
-import androidx.core.content.ContextCompat;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,7 +15,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Random;
 
 public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
 
@@ -29,7 +23,7 @@ public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
     FolderOverlay pollutionOverlay;
 
 
-    public FetchDataTask(MapView mapView, Context context,FolderOverlay markersOverlay ) {
+    public FetchDataTask(MapView mapView, Context context, FolderOverlay markersOverlay) {
         this.mapView = mapView;
         this.mContext = context;
         this.pollutionOverlay = markersOverlay;
@@ -63,6 +57,7 @@ public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
         if (jsonData == null) {
             return;
         }
+
 
         // A HashMap to store sensor data for each unique latitude and longitude pair
         HashMap<String, JSONObject> uniqueLocations = new HashMap<>();
@@ -160,9 +155,12 @@ public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
                     return true;
                 });
             }
-            //Add the pollutionOverlay to the mapView
-            mapView.getOverlays().add(pollutionOverlay);
-            mapView.invalidate(); // Refresh the map
+            // Remove the old pollutionOverlay and add the new one
+            mapView.post(() -> {
+                mapView.getOverlays().remove(pollutionOverlay);
+                mapView.getOverlays().add(pollutionOverlay);
+                mapView.invalidate(); // Refresh the map
+            });
             // Update the number of pollution markers
             ((MainActivity) mContext).updateMarkerNumberText(pollutionOverlay.getItems().size());
         } catch (Exception e) {

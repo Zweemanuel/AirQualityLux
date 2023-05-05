@@ -3,6 +3,7 @@ package com.example.airqualitylux;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
@@ -30,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     private Switch pollutionSwitch;
     private SeekBar seekBar;
     private CheckBox centerButtonCheck,seekBarCheck;
+    private Handler refreshHandler;
+    private Runnable refreshRunnable;
+    private FolderOverlay pollutionOverlay;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +79,18 @@ public class MainActivity extends AppCompatActivity {
         mapView.getController().setZoom(10.5);
         mapView.getController().setCenter(new GeoPoint(49.8153, 6.1296)); // Set a default center point
 
-        new FetchDataTask(mapView, MainActivity.this, markersOverlay).execute("https://data.sensor.community/airrohr/v1/filter/country=LU");
+        // Initialize the handler and runnable to refresh the data
+        refreshHandler = new Handler();
+        refreshRunnable = new Runnable() {
+            @Override
+            public void run() {
+                refreshData(mapView, MainActivity.this, markersOverlay);
+                refreshHandler.postDelayed(this, 60 * 60 * 1000); // 60 minutes
+            }
+        };
+
+        // Start the periodic updates
+        refreshHandler.post(refreshRunnable);
         // User Interface
         // Pollution switch
         pollutionSwitch = findViewById(R.id.switch1);
@@ -135,6 +150,21 @@ public class MainActivity extends AppCompatActivity {
                 seekBar.setVisibility(View.INVISIBLE);
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Remove the runnable from the handler when the activity is destroyed
+        refreshHandler.removeCallbacks(refreshRunnable);
+    }
+
+    private void refreshData(MapView mapView, MainActivity mainActivity, FolderOverlay markersOverlay) {
+        FolderOverlay newPollutionOverlay = new FolderOverlay();
+
+        System.out.println("Data refreshed");
+        markersOverlay.getItems().clear();
+        new FetchDataTask(mapView, MainActivity.this, markersOverlay).execute("https://data.sensor.community/airrohr/v1/filter/country=LU");
     }
 
     public void updateMarkerNumberText(int n) {
