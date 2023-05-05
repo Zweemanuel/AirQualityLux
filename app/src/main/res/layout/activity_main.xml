@@ -41,7 +41,10 @@
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:max="150"
-            android:min="100"/>
+            android:min="100"
+            android:progressTint="@color/black"
+            android:progressBackgroundTint="@color/grey"
+            android:progressBackgroundTintMode="src_over"/>
 
     </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
 

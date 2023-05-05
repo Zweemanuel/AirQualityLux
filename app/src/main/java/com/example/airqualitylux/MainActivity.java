@@ -2,9 +2,11 @@ package com.example.airqualitylux;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -84,14 +86,17 @@ public class MainActivity extends AppCompatActivity {
         refreshRunnable = new Runnable() {
             @Override
             public void run() {
-                refreshData(mapView, MainActivity.this, markersOverlay);
+                refreshData(mapView,  markersOverlay);
                 refreshHandler.postDelayed(this, 60 * 60 * 1000); // 60 minutes
             }
         };
 
         // Start the periodic updates
         refreshHandler.post(refreshRunnable);
+
         // User Interface
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         // Pollution switch
         pollutionSwitch = findViewById(R.id.switch1);
         pollutionSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -117,11 +122,14 @@ public class MainActivity extends AppCompatActivity {
         // Center Check Button
         centerButtonCheck = findViewById(R.id.centerButtonCheck);
         centerButtonCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
+
             if (isChecked) {
                 centerButton.setVisibility(View.VISIBLE);
             } else {
                 centerButton.setVisibility(View.INVISIBLE);
             }
+            editor.putBoolean("centerButtonCheck", centerButtonCheck.isChecked());
+            editor.apply();
         });
         // Vertical Seekbar Zoom
         seekBar = findViewById(R.id.seek_bar);
@@ -144,12 +152,20 @@ public class MainActivity extends AppCompatActivity {
         // Seekbar check
         seekBarCheck = findViewById(R.id.seekBarCheck);
         seekBarCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
+
             if (isChecked) {
                 seekBar.setVisibility(View.VISIBLE);
             } else {
                 seekBar.setVisibility(View.INVISIBLE);
             }
+            editor.putBoolean("seekBarCheck", seekBarCheck.isChecked());
+            editor.apply();
         });
+
+        // Load saved states
+        centerButtonCheck.setChecked(sharedPreferences.getBoolean("centerButtonCheck", true));
+        seekBarCheck.setChecked(sharedPreferences.getBoolean("seekBarCheck", false));
+        Log.d("onCreate", "SeekBar isChecked: " + seekBarCheck.isChecked()); // add this line
     }
 
     @Override
@@ -159,15 +175,16 @@ public class MainActivity extends AppCompatActivity {
         refreshHandler.removeCallbacks(refreshRunnable);
     }
 
-    private void refreshData(MapView mapView, MainActivity mainActivity, FolderOverlay markersOverlay) {
-        FolderOverlay newPollutionOverlay = new FolderOverlay();
+    private void refreshData(MapView mapView, FolderOverlay markersOverlay) {
 
         System.out.println("Data refreshed");
         markersOverlay.getItems().clear();
         new FetchDataTask(mapView, MainActivity.this, markersOverlay).execute("https://data.sensor.community/airrohr/v1/filter/country=LU");
+
     }
 
     public void updateMarkerNumberText(int n) {
         markerNumberText.setText("Markers: " + n);
     }
+
 }
