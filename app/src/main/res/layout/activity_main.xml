@@ -66,7 +66,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="16dp"
+            android:background="@color/white">
 
             <View
                 android:id="@+id/my_view"
@@ -87,13 +88,31 @@
                 android:text="Markers:"
                 android:textColor="@color/black" />
 
-            <Switch
-                android:id="@+id/switch1"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:checked="true"
-                android:text="Pollution Data"
-                android:textColor="@color/black" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Switch
+                    android:id="@+id/switch1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:checked="true"
+                    android:text="Pollution Data"
+                    android:textColor="@color/black" />
+                <ImageButton
+                    android:id="@+id/infoButton"
+                    android:layout_width="33dp"
+                    android:layout_height="33dp"
+                    android:layout_marginEnd="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:background="@android:color/transparent"
+                    android:src="@android:drawable/ic_dialog_info"
+                    app:tint="@color/black"
+                    android:scaleType="fitCenter"/>
+            </RelativeLayout>
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"

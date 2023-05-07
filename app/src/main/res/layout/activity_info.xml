@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <!-- Pressure -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pressure"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="Atmospheric pressure is the force exerted by the weight of air on the Earth's surface. It is measured in units such as hectopascals (hPa) or millibars (mbar). Pressure can be affected by altitude, temperature, and weather systems."
+                android:textSize="14sp" />
+
+            <!-- Humidity -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Humidity"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="Humidity is the amount of water vapor present in the air. It is typically represented as a percentage, called relative humidity, which indicates the current level of moisture in the air relative to the maximum amount the air can hold at the same temperature."
+                android:textSize="14sp" />
+
+            <!-- Pressure at sea level -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pressure at sea level"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="This is the atmospheric pressure adjusted to sea level, which allows for a standardized comparison of pressure measurements taken at different altitudes. Sea level pressure is calculated by compensating for the decrease in air pressure with increasing altitude."
+                android:textSize="14sp" />
+
+            <!-- P1 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="P1 (PM10)"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="This refers to the concentration of particulate matter (PM) with a diameter of 10 micrometers (µm) or less, also known as PM10. These particles can come from various sources, such as dust, pollen, mold, and emissions from vehicles and industrial activities. PM10 can be harmful to human health, as it can penetrate deep into the respiratory system and cause various health issues."
+                android:textSize="14sp" />
+
+            <!-- P2 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="P2 (PM2.5)"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="This refers to the concentration of particulate matter (PM) with a diameter of 2.5 micrometers (µm) or less, also known as PM2.5. These fine particles are produced by combustion processes, such as those occurring in motor vehicles and power plants, as well as from natural sources like forest fires. PM2.5 is considered more dangerous than PM10, as its smaller size allows it to penetrate deeper into the lungs, potentially causing more severe health problems."
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="-10dp"
+        android:background="@android:color/transparent"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        tools:text="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+         />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

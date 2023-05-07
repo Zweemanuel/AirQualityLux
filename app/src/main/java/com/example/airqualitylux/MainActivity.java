@@ -2,6 +2,7 @@ package com.example.airqualitylux;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,7 +29,7 @@ import org.osmdroid.views.overlay.FolderOverlay;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ImageButton centerButton;
+    private ImageButton centerButton, infoButton;
     private TextView markerNumberText;
     private Switch pollutionSwitch;
     private SeekBar seekBar;
@@ -165,7 +166,18 @@ public class MainActivity extends AppCompatActivity {
         // Load saved states
         centerButtonCheck.setChecked(sharedPreferences.getBoolean("centerButtonCheck", true));
         seekBarCheck.setChecked(sharedPreferences.getBoolean("seekBarCheck", false));
-        Log.d("onCreate", "SeekBar isChecked: " + seekBarCheck.isChecked()); // add this line
+        Log.d("onCreate", "SeekBar isChecked: " + seekBarCheck.isChecked());
+
+        // Info Button
+        infoButton = findViewById(R.id.infoButton);
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.print("BUTTON");
+                Intent infoActivityIntent = new Intent(MainActivity.this, InfoActivity.class);
+                startActivity(infoActivityIntent);
+            }
+        });
     }
 
     @Override
