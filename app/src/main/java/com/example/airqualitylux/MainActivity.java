@@ -26,6 +26,8 @@ import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.FolderOverlay;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox centerButtonCheck,seekBarCheck;
     private Handler refreshHandler;
     private Runnable refreshRunnable;
+    private MyLocationNewOverlay locationOverlay;
     private FolderOverlay pollutionOverlay;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +84,12 @@ public class MainActivity extends AppCompatActivity {
         // Set initial view and zoom level
         mapView.getController().setZoom(10.5);
         mapView.getController().setCenter(new GeoPoint(49.8153, 6.1296)); // Set a default center point
+
+        // Create a location overlay and add it to the map
+        GpsMyLocationProvider locationProvider = new GpsMyLocationProvider(this);
+        locationOverlay = new MyLocationNewOverlay(locationProvider, mapView);
+        locationOverlay.enableMyLocation();
+        mapView.getOverlays().add(locationOverlay);
 
         // Initialize the handler and runnable to refresh the data
         refreshHandler = new Handler();
