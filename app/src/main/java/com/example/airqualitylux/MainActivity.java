@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.card.MaterialCardView;
 
+import org.json.JSONObject;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
@@ -33,6 +34,7 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private Handler refreshHandler;
     private Runnable refreshRunnable;
     private MyLocationNewOverlay locationOverlay;
+    private FetchDataTask fetchDataTask;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -195,16 +198,7 @@ public class MainActivity extends AppCompatActivity {
         markerlistButton = findViewById(R.id.markerlistButton);
         markerlistButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                ArrayList<String> markerInfos = new ArrayList<>();
-                for (Overlay overlay : markersOverlay.getItems()) {
-                    if (overlay instanceof Marker) {
-                        Marker marker = (Marker) overlay;
-                        String info = "Title: " + marker.getTitle() + "\nSnippet: " + marker.getSnippet();
-                        markerInfos.add(info);
-                    }
-                }
                 Intent markerListIntent = new Intent(MainActivity.this, MarkerListActivity.class);
-                markerListIntent.putStringArrayListExtra("markerInfos", markerInfos);
                 startActivity(markerListIntent);
             }
         });
@@ -218,11 +212,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void refreshData(MapView mapView, FolderOverlay markersOverlay) {
-
         System.out.println("Data refreshed");
         markersOverlay.getItems().clear();
-        new FetchDataTask(mapView, MainActivity.this, markersOverlay).execute("https://data.sensor.community/airrohr/v1/filter/country=LU");
-
+        if (fetchDataTask != null) {
+            fetchDataTask.cancel(true); // Cancel the previous task if it's not null
+        }
+        fetchDataTask = new FetchDataTask(mapView, MainActivity.this, markersOverlay);
+        fetchDataTask.execute("https://data.sensor.community/airrohr/v1/filter/country=LU");
     }
 
     public void updateMarkerNumberText(int n) {

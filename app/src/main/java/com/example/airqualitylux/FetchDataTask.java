@@ -16,9 +16,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
+
+    private List<JSONObject> sensorDataList = new ArrayList<>();
     private final MapView mapView;
     private Context mContext;
     private FolderOverlay pollutionOverlay;
@@ -173,7 +177,11 @@ public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
             }
             return true;
         });
+        // Add sensorData for future use
+        sensorDataList.add(sensorData);
+        DataHolder.getInstance().setSensorDataList(sensorDataList);
     }
+
 
     private void updateUI() {
         mapView.post(() -> {
