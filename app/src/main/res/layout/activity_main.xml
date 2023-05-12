@@ -110,6 +110,17 @@
                     android:src="@android:drawable/ic_dialog_info"
                     app:tint="@color/black"
                     android:scaleType="fitCenter"/>
+
+                <ImageButton
+                    android:id="@+id/markerlistButton"
+                    android:layout_width="33dp"
+                    android:layout_height="33dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="85dp"
+                    android:background="@android:color/transparent"
+                    android:scaleType="fitCenter"
+                    android:src="@android:drawable/ic_dialog_alert"
+                    app:tint="@color/teal_200" />
             </RelativeLayout>
 
 

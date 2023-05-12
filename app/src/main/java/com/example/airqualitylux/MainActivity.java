@@ -26,12 +26,17 @@ import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.FolderOverlay;
+import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Overlay;
+import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
-    private ImageButton centerButton, infoButton;
+    private ImageButton centerButton, infoButton,markerlistButton;
     private TextView markerNumberText;
     private Switch pollutionSwitch;
     private SeekBar seekBar;
@@ -39,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private Handler refreshHandler;
     private Runnable refreshRunnable;
     private MyLocationNewOverlay locationOverlay;
-    private FolderOverlay pollutionOverlay;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -185,6 +189,23 @@ public class MainActivity extends AppCompatActivity {
                 System.out.print("BUTTON");
                 Intent infoActivityIntent = new Intent(MainActivity.this, InfoActivity.class);
                 startActivity(infoActivityIntent);
+            }
+        });
+        // Marker List Button
+        markerlistButton = findViewById(R.id.markerlistButton);
+        markerlistButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ArrayList<String> markerInfos = new ArrayList<>();
+                for (Overlay overlay : markersOverlay.getItems()) {
+                    if (overlay instanceof Marker) {
+                        Marker marker = (Marker) overlay;
+                        String info = "Title: " + marker.getTitle() + "\nSnippet: " + marker.getSnippet();
+                        markerInfos.add(info);
+                    }
+                }
+                Intent markerListIntent = new Intent(MainActivity.this, MarkerListActivity.class);
+                markerListIntent.putStringArrayListExtra("markerInfos", markerInfos);
+                startActivity(markerListIntent);
             }
         });
     }
