@@ -3,16 +3,19 @@ package com.example.airqualitylux;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.location.Geocoder;
+import android.location.Address;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MarkerListActivity extends AppCompatActivity {
     private ListView listView;
@@ -35,7 +38,21 @@ public class MarkerListActivity extends AppCompatActivity {
                 JSONObject sensor = sensorData.getJSONObject("sensor");
                 JSONObject location = sensorData.getJSONObject("location");
 
-                String info = "Lat - " + location.getString("latitude") + ", " + "Long - " + location.getString("longitude");
+                double latitude = location.getDouble("latitude");
+                double longitude = location.getDouble("longitude");
+
+                String cityName = "";
+                Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+                try {
+                    List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                    if (addresses != null && addresses.size() > 0) {
+                        cityName = addresses.get(0).getLocality();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                String info =(cityName != null ? cityName : "Unknown");
 
                 // Get sensor data values
                 JSONArray sensorDataValues = sensorData.getJSONArray("sensordatavalues");
@@ -48,8 +65,7 @@ public class MarkerListActivity extends AppCompatActivity {
                         info += "\n" + valueType + ": " + sensorDataValue.getString("value");
                     }
                 }
-                info += "\nSensor ID: " + sensor.getString("id")
-                        + "\nTimestamp: " + sensorData.getString("timestamp");
+                info += "\nTime: " + sensorData.getString("timestamp");
 
                 markerInfos.add(info);
             } catch (JSONException e) {
