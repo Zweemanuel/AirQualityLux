@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.card.MaterialCardView;
 
-import org.json.JSONObject;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
@@ -27,14 +25,8 @@ import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.FolderOverlay;
-import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.Overlay;
-import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -148,17 +140,33 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("centerButtonCheck", centerButtonCheck.isChecked());
             editor.apply();
         });
-        // Vertical Seekbar Zoom
+        //Seekbar
         seekBar = findViewById(R.id.seek_bar);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            private boolean initialTouch = true;
+            private int referencePoint;
+
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mapView.getController().setZoom(seekBar.getProgress() / 10f);
+                if (fromUser) {
+                    if (initialTouch) {
+                        referencePoint = progress;
+                        initialTouch = false;
+                    } else {
+                        if (progress > referencePoint) {
+                            mapView.getController().zoomIn();
+                        } else if (progress < referencePoint) {
+                            mapView.getController().zoomOut();
+                        }
+                        referencePoint = progress;
+                    }
+                }
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+                initialTouch = true;
             }
 
             @Override
@@ -166,6 +174,9 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+
         // Seekbar check
         seekBarCheck = findViewById(R.id.seekBarCheck);
         seekBarCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {

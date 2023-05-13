@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class InfoActivity extends AppCompatActivity {
 
-    ImageButton backButton;
+    private ImageButton backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,8 +20,7 @@ public class InfoActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.print("BUTTON");
-                finish(); // or use onBackPressed();
+                finish();
             }
         });
     }

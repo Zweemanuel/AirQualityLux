@@ -3,7 +3,9 @@ package com.example.airqualitylux;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.location.Geocoder;
 import android.location.Address;
@@ -19,6 +21,7 @@ import java.util.Locale;
 
 public class MarkerListActivity extends AppCompatActivity {
     private ListView listView;
+    private ImageButton backButton;
     private List<JSONObject> sensorDataList = new ArrayList<>();
     private ArrayList<String> markerInfos = new ArrayList<>();
 
@@ -76,5 +79,14 @@ public class MarkerListActivity extends AppCompatActivity {
         // Set the adapter for the list view
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, markerInfos);
         listView.setAdapter(adapter);
+
+        //Back button
+        backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 }
