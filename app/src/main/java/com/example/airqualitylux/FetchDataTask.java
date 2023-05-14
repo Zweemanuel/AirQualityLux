@@ -3,6 +3,8 @@ package com.example.airqualitylux;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import androidx.core.content.ContextCompat;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -141,14 +143,21 @@ public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
 
         JSONArray sensorDataValues = sensorData.getJSONArray("sensordatavalues");
         StringBuilder descriptionBuilder = new StringBuilder();
+        Double p1Value = null;
 
         for (int j = 0; j < sensorDataValues.length(); j++) {
             JSONObject sensorDataValue = sensorDataValues.getJSONObject(j);
             // Add a filter for the values
             String valueType = sensorDataValue.getString("value_type");
+
             if(!(valueType.contains("P1") || valueType.contains("P2")||valueType.contains("temperature")||valueType.contains("humidity"))){
                 continue;
             }
+
+            if(valueType.contains("P1")){
+                p1Value = sensorDataValue.getDouble("value");
+            }
+
             descriptionBuilder.append(sensorDataValue.getString("value_type"))
                     .append(": ")
                     .append(sensorDataValue.getString("value"))
@@ -163,6 +172,19 @@ public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
 
         marker.setTitle("Sensor ID: " + sensor.getString("id"));
         marker.setSnippet(descriptionBuilder.toString());
+
+        // Set marker icon based on P1 value
+        if(p1Value != null) {
+            if(p1Value < 10.0) {
+                marker.setIcon(ContextCompat.getDrawable(mContext, R.drawable.marker_icon_low));
+            } else if(p1Value < 20.0) {
+                marker.setIcon(ContextCompat.getDrawable(mContext, R.drawable.marker_icon_medium));
+            } else {
+                marker.setIcon(ContextCompat.getDrawable(mContext, R.drawable.marker_icon_high));
+            }
+        }else{
+            marker.setIcon(ContextCompat.getDrawable(mContext, R.drawable.marker_icon_null));
+        }
 
         marker.setInfoWindow(new CustomInfoWindowAdapter(R.layout.custom_marker_info_window, mapView));
 
@@ -181,6 +203,7 @@ public class FetchDataTask extends AsyncTask<String, Void, JSONArray> {
         sensorDataList.add(sensorData);
         DataHolder.getInstance().setSensorDataList(sensorDataList);
     }
+
 
 
     private void updateUI() {

@@ -142,10 +142,12 @@ public class MainActivity extends AppCompatActivity {
         });
         //Seekbar
         seekBar = findViewById(R.id.seek_bar);
+        seekBar.getThumb().mutate().setAlpha(200);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             private boolean initialTouch = true;
             private int referencePoint;
+            private float currentZoomLevel = mapView.getZoomLevel();
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -155,10 +157,11 @@ public class MainActivity extends AppCompatActivity {
                         initialTouch = false;
                     } else {
                         if (progress > referencePoint) {
-                            mapView.getController().zoomIn();
+                            currentZoomLevel += 0.4f; // Increase zoom level
                         } else if (progress < referencePoint) {
-                            mapView.getController().zoomOut();
+                            currentZoomLevel -= 0.4f; // Decrease zoom level
                         }
+                        mapView.getController().setZoom(currentZoomLevel);
                         referencePoint = progress;
                     }
                 }
@@ -174,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
 
 
 
@@ -233,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateMarkerNumberText(int n) {
-        markerNumberText.setText("Markers: " + n);
+        markerNumberText.setText(": " + n);
     }
 
 }
