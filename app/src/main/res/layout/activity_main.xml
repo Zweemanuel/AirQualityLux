@@ -30,9 +30,9 @@
 
     <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
         android:layout_width="30dp"
-        android:layout_height="600dp"
+        android:layout_height="500dp"
         android:layout_gravity="end"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="50dp"
         android:layout_marginRight="15dp"
         android:rotation="180">
 
@@ -40,7 +40,7 @@
             android:id="@+id/seek_bar"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:max="150"
+            android:max="200"
             android:min="100"
             android:progressTint="@color/black"
             android:progressBackgroundTint="@color/grey"

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -27,6 +28,9 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.FolderOverlay;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -112,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
             markersOverlay.setEnabled(isChecked);
             mapView.invalidate();
         });
+
+
         // Number of markers
         markerNumberText = findViewById(R.id.markerNumberText);
         // Bottom card
@@ -142,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         });
         //Seekbar
         seekBar = findViewById(R.id.seek_bar);
-        seekBar.getThumb().mutate().setAlpha(200);
+        seekBar.setProgress(150);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             private boolean initialTouch = true;
@@ -174,12 +180,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
-
-
-
 
         // Seekbar check
         seekBarCheck = findViewById(R.id.seekBarCheck);
