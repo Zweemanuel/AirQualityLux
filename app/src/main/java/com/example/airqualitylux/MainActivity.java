@@ -163,9 +163,9 @@ public class MainActivity extends AppCompatActivity {
                         initialTouch = false;
                     } else {
                         if (progress > referencePoint) {
-                            currentZoomLevel += 0.4f; // Increase zoom level
+                            currentZoomLevel += 0.1f; // Increase zoom level
                         } else if (progress < referencePoint) {
-                            currentZoomLevel -= 0.4f; // Decrease zoom level
+                            currentZoomLevel -= 0.1f; // Decrease zoom level
                         }
                         mapView.getController().setZoom(currentZoomLevel);
                         referencePoint = progress;
@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateMarkerNumberText(int n) {
-        markerNumberText.setText(": " + n);
+        markerNumberText.setText(" " + n);
     }
 
 }
