@@ -1,10 +1,13 @@
 package com.example.airqualitylux;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.location.Geocoder;
@@ -22,8 +25,11 @@ import java.util.Locale;
 public class MarkerListActivity extends AppCompatActivity {
     private ListView listView;
     private ImageButton backButton;
+    private EditText searchEditText;
     private List<JSONObject> sensorDataList = new ArrayList<>();
     private ArrayList<String> markerInfos = new ArrayList<>();
+    private ArrayList<String> filteredMarkerInfos;
+    private ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +82,9 @@ public class MarkerListActivity extends AppCompatActivity {
             }
         }
 
-        // Set the adapter for the list view
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, markerInfos);
+        // Set the adapter for the list view & instantiate the filteredList
+        filteredMarkerInfos = new ArrayList<>(markerInfos);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, filteredMarkerInfos);
         listView.setAdapter(adapter);
 
         //Back button
@@ -88,5 +95,41 @@ public class MarkerListActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        // Search function
+
+        searchEditText = findViewById(R.id.searchEditText);
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Not used
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterMarkers(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                // Not used
+            }
+        });
+    }
+
+    private void filterMarkers(String searchText) {
+        filteredMarkerInfos.clear();
+
+        if (TextUtils.isEmpty(searchText)) {
+            filteredMarkerInfos.addAll(markerInfos);
+        } else {
+            for (String markerInfo : markerInfos) {
+                if (markerInfo.toLowerCase().contains(searchText.toLowerCase())) {
+                    filteredMarkerInfos.add(markerInfo);
+                }
+            }
+        }
+
+        adapter.notifyDataSetChanged();
     }
 }

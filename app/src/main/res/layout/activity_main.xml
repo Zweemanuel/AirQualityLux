@@ -28,23 +28,24 @@
         tools:text="center" />
 
     <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
-        android:layout_width="30dp"
+        android:layout_width="80dp"
         android:layout_height="300dp"
         android:layout_gravity="end|center_vertical"
         android:layout_marginTop="90dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginRight="5dp"
         android:rotation="180">
 
         <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
             android:id="@+id/seek_bar"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="match_parent"
             android:max="200"
             android:min="100"
             android:progressTint="@color/black"
             android:progressBackgroundTint="@color/black"
             android:progressBackgroundTintMode="src_over"
-            android:thumb="@null"/>
+            android:thumb="@null"
+            android:scaleY="2"/>
 
     </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
 
