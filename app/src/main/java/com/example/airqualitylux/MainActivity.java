@@ -21,6 +21,7 @@ import com.google.android.material.card.MaterialCardView;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.MapTileIndex;
 import org.osmdroid.views.CustomZoomButtonsController;
@@ -36,9 +37,10 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageButton centerButton, infoButton,markerlistButton;
     private TextView markerNumberText;
-    private Switch pollutionSwitch;
+    private Switch pollutionSwitch,focusSwitch;
     private SeekBar seekBar;
     private CheckBox centerButtonCheck,seekBarCheck;
+    private float currentZoomLevel;
     private Handler refreshHandler;
     private Runnable refreshRunnable;
     private MyLocationNewOverlay locationOverlay;
@@ -75,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
                 return url;
             }
         };
+
 
         // Configure mapView
         mapView.getTileProvider().setTileSource(geoapifyTileSource);
@@ -117,6 +120,24 @@ public class MainActivity extends AppCompatActivity {
             mapView.invalidate();
         });
 
+        //Focus View with padding
+        focusSwitch = findViewById(R.id.focusSwitch);
+        double padding = 0.6f;
+        if(focusSwitch.isChecked()){
+            BoundingBox luxembourgBounds = new BoundingBox(50.182820+padding, 6.528500+padding, 49.447781-padding, 5.735700-padding);
+            mapView.setScrollableAreaLimitDouble(luxembourgBounds);
+        }
+        focusSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+
+                BoundingBox luxembourgBounds = new BoundingBox(50.182820+padding, 6.528500+padding, 49.447781-padding, 5.735700-padding);
+                mapView.setScrollableAreaLimitDouble(luxembourgBounds);
+            }else{
+                mapView.setScrollableAreaLimitDouble(null);
+            }
+            editor.putBoolean("focusSwitch", focusSwitch.isChecked());
+            editor.apply();
+        });
 
         // Number of markers
         markerNumberText = findViewById(R.id.markerNumberText);
@@ -130,8 +151,13 @@ public class MainActivity extends AppCompatActivity {
         centerButton = findViewById(R.id.centerButton);
         centerButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mapView.getController().zoomTo(10.5);
+                float newZoomLevel = 10.5f;
+                mapView.getController().zoomTo(newZoomLevel);
                 mapView.getController().animateTo(new GeoPoint(49.8153, 6.1296));
+                // Update the current zoom level in the seekbar
+                currentZoomLevel = newZoomLevel;
+                // Update the progress of seekBar based on the new zoom level
+                seekBar.setProgress((int) (newZoomLevel * 10)); // assuming that progress = zoomLevel * 10, adjust as needed
             }
         });
         // Center Check Button
@@ -149,11 +175,10 @@ public class MainActivity extends AppCompatActivity {
         //Seekbar
         seekBar = findViewById(R.id.seek_bar);
         seekBar.setProgress(150);
+        currentZoomLevel = mapView.getZoomLevel();
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
             private boolean initialTouch = true;
             private int referencePoint;
-            private float currentZoomLevel = mapView.getZoomLevel();
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -199,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
         // Load saved states
         centerButtonCheck.setChecked(sharedPreferences.getBoolean("centerButtonCheck", true));
         seekBarCheck.setChecked(sharedPreferences.getBoolean("seekBarCheck", false));
-        Log.d("onCreate", "SeekBar isChecked: " + seekBarCheck.isChecked());
+        focusSwitch.setChecked(sharedPreferences.getBoolean("focusSwitch", false));
 
         // Info Button
         infoButton = findViewById(R.id.infoButton);
