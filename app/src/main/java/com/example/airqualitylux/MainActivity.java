@@ -45,14 +45,26 @@ public class MainActivity extends AppCompatActivity {
     private Runnable refreshRunnable;
     private MyLocationNewOverlay locationOverlay;
     private FetchDataTask fetchDataTask;
+    private MapView mapView;
+    private GpsMyLocationProvider locationProvider;
+    private FolderOverlay markersOverlay;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FolderOverlay markersOverlay = new FolderOverlay();
 
+        setupMapView();
+        setupOverlays();
+        setupDataRefresh();
+
+        setupSharedPreferences();
+        setupUI();
+    }
+    private void setupMapView(){
         //Initialize mapView
-        MapView mapView = findViewById(R.id.mapView);
+        mapView = findViewById(R.id.mapView);
         Configuration.getInstance().load(getApplicationContext(), PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
 
         //Set up custom tile source with Geoapify API
@@ -78,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-
         // Configure mapView
         mapView.getTileProvider().setTileSource(geoapifyTileSource);
         mapView.getTileProvider().clearTileCache();
@@ -90,13 +101,16 @@ public class MainActivity extends AppCompatActivity {
         // Set initial view and zoom level
         mapView.getController().setZoom(10.5);
         mapView.getController().setCenter(new GeoPoint(49.8153, 6.1296)); // Set a default center point
-
+    }
+    private void setupOverlays(){
         // Create a location overlay and add it to the map
-        GpsMyLocationProvider locationProvider = new GpsMyLocationProvider(this);
+        markersOverlay = new FolderOverlay();
+        locationProvider = new GpsMyLocationProvider(this);
         locationOverlay = new MyLocationNewOverlay(locationProvider, mapView);
         locationOverlay.enableMyLocation();
         mapView.getOverlays().add(locationOverlay);
-
+    }
+    private void setupDataRefresh(){
         // Initialize the handler and runnable to refresh the data
         refreshHandler = new Handler();
         refreshRunnable = new Runnable() {
@@ -110,10 +124,27 @@ public class MainActivity extends AppCompatActivity {
         // Start the periodic updates
         refreshHandler.post(refreshRunnable);
 
-        // User Interface
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        // Pollution switch
+    }
+    private void setupSharedPreferences(){
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        editor = sharedPreferences.edit();
+    }
+    private void loadSharedPreferences(){
+        // Load saved states
+        centerButtonCheck.setChecked(sharedPreferences.getBoolean("centerButtonCheck", true));
+        seekBarCheck.setChecked(sharedPreferences.getBoolean("seekBarCheck", false));
+        focusSwitch.setChecked(sharedPreferences.getBoolean("focusSwitch", false));
+    }
+    private void setupUI(){
+        setupSwitches();
+        setupBottomCard();
+        setupButtons();
+        setupSeekbars();
+        setupChecks();
+        loadSharedPreferences();
+    }
+    private void setupSwitches(){
+        //Pollution switch
         pollutionSwitch = findViewById(R.id.switch1);
         pollutionSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             markersOverlay.setEnabled(isChecked);
@@ -138,7 +169,8 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("focusSwitch", focusSwitch.isChecked());
             editor.apply();
         });
-
+    }
+    private void setupBottomCard(){
         // Number of markers
         markerNumberText = findViewById(R.id.markerNumberText);
         // Bottom card
@@ -147,6 +179,8 @@ public class MainActivity extends AppCompatActivity {
         bottomSheetBehavior.setPeekHeight(180); // Set the peek height in pixels
         bottomSheetBehavior.setHideable(false); // Disallow hiding the bottom sheet
         bottomSheetBehavior.setHalfExpandedRatio(0.5f);
+    }
+    private void setupButtons(){
         // Center Button
         centerButton = findViewById(R.id.centerButton);
         centerButton.setOnClickListener(new View.OnClickListener() {
@@ -160,18 +194,26 @@ public class MainActivity extends AppCompatActivity {
                 seekBar.setProgress((int) (newZoomLevel * 10)); // assuming that progress = zoomLevel * 10, adjust as needed
             }
         });
-        // Center Check Button
-        centerButtonCheck = findViewById(R.id.centerButtonCheck);
-        centerButtonCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
-
-            if (isChecked) {
-                centerButton.setVisibility(View.VISIBLE);
-            } else {
-                centerButton.setVisibility(View.INVISIBLE);
+        // Info Button
+        infoButton = findViewById(R.id.infoButton);
+        infoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.print("BUTTON");
+                Intent infoActivityIntent = new Intent(MainActivity.this, InfoActivity.class);
+                startActivity(infoActivityIntent);
             }
-            editor.putBoolean("centerButtonCheck", centerButtonCheck.isChecked());
-            editor.apply();
         });
+        // Marker List Button
+        markerlistButton = findViewById(R.id.markerlistButton);
+        markerlistButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent markerListIntent = new Intent(MainActivity.this, MarkerListActivity.class);
+                startActivity(markerListIntent);
+            }
+        });
+    }
+    private void setupSeekbars(){
         //Seekbar
         seekBar = findViewById(R.id.seek_bar);
         seekBar.setProgress(150);
@@ -207,6 +249,21 @@ public class MainActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
+    }
+    private void setupChecks(){
+        // Center Check Button
+        centerButtonCheck = findViewById(R.id.centerButtonCheck);
+        centerButtonCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
+
+            if (isChecked) {
+                centerButton.setVisibility(View.VISIBLE);
+            } else {
+                centerButton.setVisibility(View.INVISIBLE);
+            }
+            editor.putBoolean("centerButtonCheck", centerButtonCheck.isChecked());
+            editor.apply();
+        });
+
 
         // Seekbar check
         seekBarCheck = findViewById(R.id.seekBarCheck);
@@ -220,39 +277,7 @@ public class MainActivity extends AppCompatActivity {
             editor.putBoolean("seekBarCheck", seekBarCheck.isChecked());
             editor.apply();
         });
-
-        // Load saved states
-        centerButtonCheck.setChecked(sharedPreferences.getBoolean("centerButtonCheck", true));
-        seekBarCheck.setChecked(sharedPreferences.getBoolean("seekBarCheck", false));
-        focusSwitch.setChecked(sharedPreferences.getBoolean("focusSwitch", false));
-
-        // Info Button
-        infoButton = findViewById(R.id.infoButton);
-        infoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                System.out.print("BUTTON");
-                Intent infoActivityIntent = new Intent(MainActivity.this, InfoActivity.class);
-                startActivity(infoActivityIntent);
-            }
-        });
-        // Marker List Button
-        markerlistButton = findViewById(R.id.markerlistButton);
-        markerlistButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent markerListIntent = new Intent(MainActivity.this, MarkerListActivity.class);
-                startActivity(markerListIntent);
-            }
-        });
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Remove the runnable from the handler when the activity is destroyed
-        refreshHandler.removeCallbacks(refreshRunnable);
-    }
-
     private void refreshData(MapView mapView, FolderOverlay markersOverlay) {
         System.out.println("Data refreshed");
         markersOverlay.getItems().clear();
@@ -262,9 +287,14 @@ public class MainActivity extends AppCompatActivity {
         fetchDataTask = new FetchDataTask(mapView, MainActivity.this, markersOverlay);
         fetchDataTask.execute("https://data.sensor.community/airrohr/v1/filter/country=LU");
     }
-
     public void updateMarkerNumberText(int n) {
         markerNumberText.setText(" " + n);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Remove the runnable from the handler when the activity is destroyed
+        refreshHandler.removeCallbacks(refreshRunnable);
     }
 
 }
