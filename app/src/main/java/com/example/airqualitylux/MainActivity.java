@@ -20,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.card.MaterialCardView;
 
 import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.BoundingBox;
 import org.osmdroid.util.GeoPoint;
@@ -67,8 +68,11 @@ public class MainActivity extends AppCompatActivity {
         mapView = findViewById(R.id.mapView);
         Configuration.getInstance().load(getApplicationContext(), PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
 
+        //Set up tile source with Mapnik
+        mapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
+        /**
         //Set up custom tile source with Geoapify API
-        String geoapifyApiKey = "2d507363156146c4b766af4e7c9be402";//api key
+        String geoapifyApiKey = "...";//api key
         String geoapifyStyle = "osm-bright"; //map style
 
         XYTileSource geoapifyTileSource = new XYTileSource(
@@ -93,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
         // Configure mapView
         mapView.getTileProvider().setTileSource(geoapifyTileSource);
         mapView.getTileProvider().clearTileCache();
-
+         */
         // Remove default zoom buttons and set multi-touch controls
         mapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
         mapView.setMultiTouchControls(true);
